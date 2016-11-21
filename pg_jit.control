@@ -1,0 +1,4 @@
+comment = 'Just-in-time compilation in PostgreSQL using libFirm'
+default_version = '0.1'
+module_pathname = '$libdir/pg_jit'
+relocatable = true
