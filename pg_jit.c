@@ -277,8 +277,8 @@ get_fptr(void *handle, const char* ld_name)
 	error = dlerror();
 	if(error)
 	{
-		puts(error);
-		exit(-1);
+		char *msg = "Symbol not found!";
+		ereport(ERROR, (errmsg_internal(msg)));
 	}
 	return fptr;
 }
@@ -310,7 +310,7 @@ init_firm()
 	     be_parse_arg("pic=elf")))
 	{
 		char *msg = "Firm backend initialization failed!";
-		ereport(NOTICE, (errmsg_internal(msg)));
+		ereport(ERROR, (errmsg_internal(msg)));
 	}
 	if(ir_import(path_to_ir))
 	{
@@ -335,8 +335,8 @@ compile()
 	         ld_name);
 	FILE *out = fopen(filename_s, "w");
 	if(out == NULL) {
-		perror("couldn't open assembly file for writing");
-		exit(-1);
+		char *msg = "couldn't open assembly file for writing";
+		ereport(ERROR, (errmsg_internal(msg)));
 	}
 	be_main(out, "cup");
 	fclose(out);
@@ -355,11 +355,12 @@ compile()
 		int rc = system(command);
 		if (!WIFEXITED(rc) || WEXITSTATUS(rc))
 		{
-			char *msg = "assembler/linker command failed: %s\n";
-			fprintf(stderr,
-			        msg,
-			        command);
-			exit(-1);
+			char buffer[200];
+			char *msg = "assembler/linker command failed:";
+			snprintf(buffer,
+			         sizeof(buffer),
+			         "%s %s", msg, command);
+			ereport(ERROR, (errmsg_internal(buffer)));
 		}
 	}
 	no_codegen();
@@ -368,8 +369,7 @@ compile()
 	const char* error = dlerror();
 	if(error)
 	{
-		puts(error);
-		exit(-1);
+		ereport(ERROR, (errmsg_internal(error)));
 	}
 	return handle;
 }
