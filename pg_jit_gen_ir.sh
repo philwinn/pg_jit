@@ -1,8 +1,8 @@
 #!/bin/bash
 # In postgres' source: Create a folder 'tmp' in src/backend/executor
-# Place this file in src/backend/executor/tmp
+# Place this script in src/backend/executor/tmp
 # Neccessary preconditions:
-#   install cparser and libFirm,
+#   install cparser (lto branch) and libFirm (lto branch),
 #   comment out the following lines in src/include/pg_config.h:
 #     #define HAVE__BUILTIN_UNREACHABLE 1
 #     #define PG_INT128_TYPE __int128
