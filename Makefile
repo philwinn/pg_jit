@@ -1,18 +1,21 @@
-MODULE_big = pg_jit
-OBJS = pg_jit.o
-EXTENSION = pg_jit
-LFLAGS = -lfirm -lm -ldl
+-include config.mak
 
-override CFLAGS += -Wall -O3 -march=native -fomit-frame-pointer -std=gnu99
-CFLAGS_DEBUG = -Wall -O0 -ggdb3 -std=gnu99
+VARIANT 	?= DEBUG
+PREFIX		?= /usr/local
 
-SHLIB_LINK += $(LFLAGS)
+MODULE_big 	= pg_jit
+OBJS		= pg_jit.o
+EXTENSION	= pg_jit
+LFLAGS		= -lfirm -lm -ldl
 
-PG_CONFIG = pg_config
-PGXS := $(shell $(PG_CONFIG) --pgxs)
+# Variants
+CFLAGS_DEBUG	= -O0 -g3
+CFLAGS_OPTIMIZE = -O3 -fomit-frame-pointer 
+
+override CFLAGS	+= ${CFLAGS_${VARIANT}} -Wall -std=gnu99 -march=native -I${PREFIX}/include -L${PREFIX}/lib
+
+SHLIB_LINK	+= $(LFLAGS)
+
+PG_CONFIG 	= ${PREFIX}/bin/pg_config
+PGXS 		:= $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
-
-pg_jit.o: pg_jit.c
-
-debug: CFLAGS = $(CFLAGS_DEBUG)
-debug: pg_jit.o
