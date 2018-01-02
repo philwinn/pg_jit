@@ -12,10 +12,10 @@ LFLAGS		= -lfirm -lm -ldl
 CFLAGS_DEBUG	= -O0 -g3
 CFLAGS_OPTIMIZE = -O3 -fomit-frame-pointer 
 
-override CFLAGS	+= ${CFLAGS_${VARIANT}} -Wall -std=gnu99 -march=native -I${PREFIX}/include -L${PREFIX}/lib
+override CFLAGS	+= $(CFLAGS_$(VARIANT)) -Wall -std=gnu99 -march=native -I$(PREFIX)/include -L$(PREFIX)/lib
 
 SHLIB_LINK	+= $(LFLAGS)
 
-PG_CONFIG 	= ${PREFIX}/bin/pg_config
+PG_CONFIG 	= $(PREFIX)/bin/pg_config
 PGXS 		:= $(shell $(PG_CONFIG) --pgxs)
 include $(PGXS)
